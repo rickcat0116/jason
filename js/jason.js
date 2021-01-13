@@ -44,6 +44,58 @@
                 $header.removeClass('addHeader');
             }
         });
+
+                //햄버거 메뉴 클릭하면 기억하는 변수 설정
+                //NAV  네비게이션 이벤트
+                $('.menu-bar').on({
+                    click:  function(e){
+                        e.preventDefault();
+                        if(m==0){
+                            m = 1;
+                            $('#nav').stop().animate({top:124},300);
+                        }  
+                        else{
+                            m = 0;
+                            $('#nav').stop().animate({top:-124},300);
+                        }                      
+                        $(this).toggleClass('addBtn');
+                    }
+                });
+
+
+                //메인버튼 이벤트
+                $('.mainBtn').on({
+                    mouseenter: function(){
+                        $('.sub').stop().slideUp(100);
+                        $(this).next('.sub').stop().slideDown(300);
+                    }
+                });
+
+                //서브메뉴 사라지는 효과 이벤트
+                //#nav 를 떠나면 사라짐
+                $('#nav').on({
+                    mouseleave: function(){
+                        $('.sub').stop().slideUp(300);
+                    }
+                });
+
+
+
+        //메인버튼 이벤트
+        $('.mainBtn').on({
+            mouseenter: function(){
+                $('.sub').stop().slideUp(100);
+                $(this).next('.sub').stop().slideDown(300);
+            }
+        });
+
+        //서브메뉴 사라지는 효과 이벤트
+        //#nav 를 떠나면 사라짐
+        $('#nav').on({
+            mouseleave: function(){
+                $('.sub').stop().slideUp(300);
+            }
+        });
     },
 
     section01Fn:function(){
