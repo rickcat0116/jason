@@ -10,40 +10,52 @@
             this.section05Fn();
         },
     
-    headerFn:function(){
-        var $window = $(window);
-        var $header = $("#header");
-        var $scroll = false;
-        var t = false;
+        headerFn:function(){
+            var that = null;
+            var $window = $(window);            
+            var $heaer = $('#header');
+            var $scroll = false;
+            var t = false;
+            var m = 0; //메뉴 클릭 안한 상태
 
-        $header.on({
-            mouseenter:function(){
-                $(this).addClass('addHeader');
-            },
-            
-            mouseleave:function(){
-                if( $scroll === false ){
-                    $(this).removeClass('addHeader');
-                }
-            }
-        });
 
-        $window.scroll(function(){
-            if ($(this).scrollTop() >= 30 ){
-                $scroll = true;
-                $header.addClass('addHeader');
-                if(t === false){
-                    t = true;
-                    var headerH = $('#header').height();
-                    $('html, body').stop().animate({scrollTop:$('#section02').offset().top-headerH}, 600)
-                }
+                $heaer.on({                    
+                    mouseenter:function(){
+                        that = $(this);
+                        that.addClass('addHeader'); 
+                    },
+                    mouseleave:function(){
+                        that = $(this);
+                        if( $scroll === false && m === 0 ){ //두조건 모두 만족시 헤더 배경 없어짐
+                            that.removeClass('addHeader'); 
+                        }
+                    }
+                });
 
-            } else {
-                t=false;
-                $scroll = false;
-                $header.removeClass('addHeader');
-            }
-        });
+
+                $window.scroll(function(){
+                    that = $(this);
+                    if( that.scrollTop() >= 30 ){
+                        $scroll = true;  //스크롤 10px 이상인경우 true 변경
+                        $heaer.addClass('addHeader');
+                        if( t===false ){
+                            t=true;
+                            var headerH = $('#header').height();
+                            $('html,body').stop().animate({scrollTop:$('#section2').offset().top-headerH},600,'easeInOutExpo');
+                        }
+                        
+                    }
+                    else{
+                        t=false;
+                        $scroll = false;  //스크롤 10px 이하인경우 false 변경
+                        if( m===0 ){ //햄버거 메뉴 클릭안된상태만 헤더 배경없어짐
+                            $heaer.removeClass('addHeader');
+                        }
+                        
+                    }
+                });
+
+                
 
                 //햄버거 메뉴 클릭하면 기억하는 변수 설정
                 //NAV  네비게이션 이벤트
@@ -80,23 +92,7 @@
                 });
 
 
-
-        //메인버튼 이벤트
-        $('.mainBtn').on({
-            mouseenter: function(){
-                $('.sub').stop().slideUp(100);
-                $(this).next('.sub').stop().slideDown(300);
-            }
-        });
-
-        //서브메뉴 사라지는 효과 이벤트
-        //#nav 를 떠나면 사라짐
-        $('#nav').on({
-            mouseleave: function(){
-                $('.sub').stop().slideUp(300);
-            }
-        });
-    },
+        },
 
     section01Fn:function(){
         var cnt = 0;
