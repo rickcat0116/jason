@@ -13,20 +13,22 @@
         headerFn:function(){
             var that = null;
             var $window = $(window);            
-            var $heaer = $('#header');
+            var $header = $('#header');
             var $scroll = false;
             var t = false;
-            var m = 0; //메뉴 클릭 안한 상태
+            var m = 0;
+            var s = -1;
+            var topP = 124;
 
 
-                $heaer.on({                    
+                $header.on({                    
                     mouseenter:function(){
                         that = $(this);
                         that.addClass('addHeader'); 
                     },
                     mouseleave:function(){
                         that = $(this);
-                        if( $scroll === false && m === 0 ){ //두조건 모두 만족시 헤더 배경 없어짐
+                        if( $scroll === false && m === 0 ){
                             that.removeClass('addHeader'); 
                         }
                     }
@@ -36,58 +38,85 @@
                 $window.scroll(function(){
                     that = $(this);
                     if( that.scrollTop() >= 30 ){
-                        $scroll = true;  //스크롤 10px 이상인경우 true 변경
+                        $scroll = true; 
                         $heaer.addClass('addHeader');
                         if( t===false ){
                             t=true;
                             var headerH = $('#header').height();
-                            $('html,body').stop().animate({scrollTop:$('#section2').offset().top-headerH},600,'easeInOutExpo');
+                            $('html,body').stop().animate({scrollTop:$('#section02').offset().top-headerH},600,'easeInOutExpo');
                         }
                         
                     }
                     else{
                         t=false;
-                        $scroll = false;  //스크롤 10px 이하인경우 false 변경
-                        if( m===0 ){ //햄버거 메뉴 클릭안된상태만 헤더 배경없어짐
+                        $scroll = false;  
+                        if( m===0 ){ 
                             $heaer.removeClass('addHeader');
                         }
                         
                     }
                 });
 
-                
+                $window.resize(function(){
+                    resizeFn();        
+                });
 
-                //햄버거 메뉴 클릭하면 기억하는 변수 설정
-                //NAV  네비게이션 이벤트
+                function resizeFn(){
+                    if($(this).innerWidth() > 1024) {
+                        topP = 124;
+                        $('#nav').show(0).stop().animate({top:(s*topP)},300);
+                    } else if ($(this).innerWidth() > 780) {
+                        topP =  84;
+                        $('#nav').show(0).stop().animate({top:(s*topP)},300);
+                    } else {
+                        topP =  0;
+                        $('.sub').stop().slideDown(0);
+                        $('#nav').stop().animate({top:0},0);
+                            if(m==1){
+                                $('#nav').show(0);
+                                $('html').addClass('addScroll');
+                            } else {
+                                $('#nav').hide(0);
+                                $('html').removeClass('addScroll');
+                            }
+                    }
+
+                }
+
+                setTimeout(resizeFn(), 100);
+            
                 $('.menu-bar').on({
                     click:  function(e){
                         e.preventDefault();
                         if(m==0){
                             m = 1;
-                            $('#nav').stop().animate({top:124},300);
+                            s = 1;
+
                         }  
                         else{
                             m = 0;
-                            $('#nav').stop().animate({top:-124},300);
+                            s = -1;
                         }                      
+                      
+                        resizeFn();
                         $(this).toggleClass('addBtn');
                     }
                 });
 
-
-                //메인버튼 이벤트
                 $('.mainBtn').on({
                     mouseenter: function(){
-                        $('.sub').stop().slideUp(100);
-                        $(this).next('.sub').stop().slideDown(300);
+                        if($window.innerWidth() > 780 ) {
+                            $('.sub').stop().slideUp(100);
+                            $(this).next('.sub').stop().slideDown(300);
+                        }
                     }
                 });
 
-                //서브메뉴 사라지는 효과 이벤트
-                //#nav 를 떠나면 사라짐
                 $('#nav').on({
                     mouseleave: function(){
+                        if($window.innerWidth() > 780 ) {
                         $('.sub').stop().slideUp(300);
+                        }
                     }
                 });
 
@@ -115,8 +144,6 @@
                 if(cnt<0){cnt=n-1;}
                 $slideWrap.stop().animate({left:-(100*cnt)+'%'}, 0);
             });
-
-            //페이지버튼 함수
             pageBtnFn(cnt);
         }
 
@@ -262,7 +289,6 @@
     },
 
     section03Fn:function(){
-        //박스높이 slide View Box 너비가 1360이하이면 자동 높이 설정
 
         var $win = $(window);
         var $winW = $(window).innerWidth();
@@ -357,8 +383,6 @@
                 case 2:
                     a = [0,1];
             }
-            // $pageBtn.eq(0).css({backgroundImage:'url(./img/s3-slide'+a[0]+'.jpg'});
-            // $pageBtn.eq(1).css({backgroundImage:'url(./img/s3-slide'+a[1]+'.jpg'});
            
             for(var i=0; i<a.length; i++){
                 $pageBtn.eq(i).css({backgroundImage:'url(./img/s3-slide'+a[i]+'.jpg'});
@@ -385,22 +409,13 @@
             })
         });
 
-        // $pageBtn.on({
-        //     click: function(){
-             
-        //     }
-        // });
-
 
     },
 
     section04Fn:function(){
 
-         //슬라이드 콘테이너 박스 너비에 따른 슬라이드 3개의 너비
-         /* 1570 - 마진(40) = 1530 */
-         /* 슬라이드 너비 1570/3 =  */
         var totN = $('#section04 .slide').length;
-        var slideN = 3; // 데스크톱 3, 태블릿 2, 모바일 1 1020 초과 / 1020 / 720
+        var slideN = 3; 
         var $slideC = $('#section04 .slide-container');
         var slideW = $slideC.innerWidth()/slideN;
         var $slideWrap = $('#section04 .slide-wrap');
@@ -426,9 +441,9 @@
                 $slideWrap.stop().animate({ left:-(slideW*cnt)}, 0);
             }   
             
-            setTimeout(resizeFn, 10); /* 처음 로딩 시 한번만 실행 */
+            setTimeout(resizeFn, 10); 
 
-            $window.resize(function(){ // 크기가 변경될 때 반응
+            $window.resize(function(){ 
                 resizeFn();
             });
 
